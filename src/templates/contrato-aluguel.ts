@@ -21,9 +21,10 @@ function getNomeLocador(locador: LocadorData): string {
 }
 
 function getNomeLocatario(locatario: LocatarioData): string {
-  return locatario.tipo === "pj" || locatario.tipo === "mei"
-    ? (locatario.razaoSocial || locatario.nome)
-    : locatario.nome;
+  if (locatario.tipo === "pj") {
+    return (locatario as any).razaoSocial || locatario.nome;
+  }
+  return locatario.nome;
 }
 
 function getDocLocador(locador: LocadorData): string {
@@ -124,13 +125,11 @@ export function gerarTextoContratoAluguel(dados: ContratoAluguelFormData): strin
 
 <p style="margin-bottom: 15px;"><strong>${artLocatario.toUpperCase()}:</strong> `;
 
-  if (dados.locatario.tipo === "pj" || dados.locatario.tipo === "mei") {
-    const nomeExibido = dados.locatario.razaoSocial || dados.locatario.nome;
-    if (dados.locatario.tipo === "mei") {
-      texto += `${nomeExibido}, MEI, inscrito no CNPJ sob nº ${dados.locatario.cnpj}, ${dados.locatario.nacionalidade}, ${dados.locatario.documentos.estadoCivil}, ${dados.locatario.profissao}, Carteira de Identidade nº ${dados.locatario.documentos.rg}, órgão emissor ${dados.locatario.documentos.orgaoEmissor}/${dados.locatario.documentos.ssp}, CPF nº ${dados.locatario.documentos.cpf}, residente e domiciliado na ${enderecoLocatario}.`;
-    } else {
-      texto += `${nomeExibido}, inscrita no CNPJ sob nº ${dados.locatario.cnpj}, com sede na ${enderecoLocatario}, neste ato representada por ${dados.locatario.representanteNome}, ${dados.locatario.nacionalidade}, ${dados.locatario.documentos.estadoCivil}, ${dados.locatario.profissao}, Carteira de Identidade nº ${dados.locatario.documentos.rg}, órgão emissor ${dados.locatario.documentos.orgaoEmissor}/${dados.locatario.documentos.ssp}, CPF nº ${dados.locatario.documentos.cpf}.`;
-    }
+  if (dados.locatario.tipo === "pj") {
+    const nomeExibido = (dados.locatario as any).razaoSocial || dados.locatario.nome;
+    texto += `${nomeExibido}, inscrita no CNPJ sob nº ${dados.locatario.cnpj}, com sede na ${enderecoLocatario}, neste ato representada por ${(dados.locatario as any).representanteNome}, ${dados.locatario.nacionalidade}, ${dados.locatario.documentos.estadoCivil}, ${dados.locatario.profissao}, Carteira de Identidade nº ${dados.locatario.documentos.rg}, órgão emissor ${dados.locatario.documentos.orgaoEmissor}/${dados.locatario.documentos.ssp}, CPF nº ${dados.locatario.documentos.cpf}.`;
+  } else if (dados.locatario.tipo === "mei") {
+    texto += `${dados.locatario.nome}, MEI, inscrito no CNPJ sob nº ${dados.locatario.cnpj}, ${dados.locatario.nacionalidade}, ${dados.locatario.documentos.estadoCivil}, ${dados.locatario.profissao}, Carteira de Identidade nº ${dados.locatario.documentos.rg}, órgão emissor ${dados.locatario.documentos.orgaoEmissor}/${dados.locatario.documentos.ssp}, CPF nº ${dados.locatario.documentos.cpf}, residente e domiciliado na ${enderecoLocatario}.`;
   } else {
     texto += `${nomeLocatario}, ${dados.locatario.nacionalidade}, ${dados.locatario.documentos.estadoCivil}, ${dados.locatario.profissao}, Carteira de Identidade nº ${dados.locatario.documentos.rg}, órgão emissor ${dados.locatario.documentos.orgaoEmissor}/${dados.locatario.documentos.ssp}, CPF nº ${dados.locatario.documentos.cpf}, residente e domiciliado na ${enderecoLocatario}.`;
   }

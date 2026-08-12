@@ -75,6 +75,9 @@ export interface LocatarioMEI {
   nacionalidade: string;
   profissao: string;
   cnpj: string;
+  razaoSocial?: string;
+  representanteNome?: string;
+  representanteCargo?: string;
   documentos: Documentos;
   endereco: Endereco;
 }
